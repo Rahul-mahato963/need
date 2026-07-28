@@ -69,6 +69,12 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    categories: Category;
+    services: Service;
+    testimonials: Testimonial;
+    'partner-applications': PartnerApplication;
+    'partner-kyc-submissions': PartnerKycSubmission;
+    providers: Provider;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,17 +84,31 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    'partner-applications': PartnerApplicationsSelect<false> | PartnerApplicationsSelect<true>;
+    'partner-kyc-submissions': PartnerKycSubmissionsSelect<false> | PartnerKycSubmissionsSelect<true>;
+    providers: ProvidersSelect<false> | ProvidersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'home-page': HomePage;
+    'site-pages': SitePage;
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'site-pages': SitePagesSelect<false> | SitePagesSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -122,7 +142,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -147,7 +167,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -160,13 +180,158 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  slug?: string | null;
+  /**
+   * Short code such as AC, PL, EL, CL, PT, CCTV.
+   */
+  icon?: string | null;
+  description: string;
+  featured?: boolean | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  name: string;
+  slug?: string | null;
+  category: number | Category;
+  /**
+   * Optional short code. Leave blank to auto-pick by service name.
+   */
+  icon?: string | null;
+  /**
+   * Optional service logo/image shown on website cards. Falls back to the icon if empty.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Optional wide photo shown on this service detail page hero.
+   */
+  heroImage?: (number | null) | Media;
+  description: string;
+  basePrice: number;
+  durationMinutes: number;
+  includes?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  available?: boolean | null;
+  /**
+   * Show this service in popular service sections.
+   */
+  popular?: boolean | null;
+  /**
+   * Lower numbers appear first on the website.
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  name: string;
+  city: string;
+  rating: number;
+  quote: string;
+  service?: string | null;
+  photo?: (number | null) | Media;
+  featured?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-applications".
+ */
+export interface PartnerApplication {
+  id: number;
+  applicantName: string;
+  businessName?: string | null;
+  phone: string;
+  email: string;
+  serviceArea: string;
+  experienceYears?: number | null;
+  services: (number | Service)[];
+  availability?:
+    | {
+        option: string;
+        id?: string | null;
+      }[]
+    | null;
+  message?: string | null;
+  status: 'new' | 'contacted' | 'approved' | 'rejected';
+  kycStatus: 'pending' | 'submitted' | 'verified' | 'rejected';
+  adminNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-kyc-submissions".
+ */
+export interface PartnerKycSubmission {
+  id: number;
+  partnerApplication: number | PartnerApplication;
+  govtIdNumber: string;
+  govtIdFile: number | Media;
+  bankAccountName: string;
+  bankName: string;
+  accountNumber: string;
+  ifscCode: string;
+  partnerPhoto: number | Media;
+  status: 'submitted' | 'under-review' | 'verified' | 'rejected';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "providers".
+ */
+export interface Provider {
+  id: number;
+  providerName: string;
+  phone: string;
+  email?: string | null;
+  serviceArea: string;
+  services: (number | Service)[];
+  status: 'active' | 'paused' | 'inactive';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +348,44 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'partner-applications';
+        value: number | PartnerApplication;
+      } | null)
+    | ({
+        relationTo: 'partner-kyc-submissions';
+        value: number | PartnerKycSubmission;
+      } | null)
+    | ({
+        relationTo: 'providers';
+        value: number | Provider;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +395,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +418,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -274,6 +463,131 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  icon?: T;
+  description?: T;
+  featured?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  category?: T;
+  icon?: T;
+  logo?: T;
+  heroImage?: T;
+  description?: T;
+  basePrice?: T;
+  durationMinutes?: T;
+  includes?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  available?: T;
+  popular?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  name?: T;
+  city?: T;
+  rating?: T;
+  quote?: T;
+  service?: T;
+  photo?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-applications_select".
+ */
+export interface PartnerApplicationsSelect<T extends boolean = true> {
+  applicantName?: T;
+  businessName?: T;
+  phone?: T;
+  email?: T;
+  serviceArea?: T;
+  experienceYears?: T;
+  services?: T;
+  availability?:
+    | T
+    | {
+        option?: T;
+        id?: T;
+      };
+  message?: T;
+  status?: T;
+  kycStatus?: T;
+  adminNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-kyc-submissions_select".
+ */
+export interface PartnerKycSubmissionsSelect<T extends boolean = true> {
+  partnerApplication?: T;
+  govtIdNumber?: T;
+  govtIdFile?: T;
+  bankAccountName?: T;
+  bankName?: T;
+  accountNumber?: T;
+  ifscCode?: T;
+  partnerPhoto?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "providers_select".
+ */
+export interface ProvidersSelect<T extends boolean = true> {
+  providerName?: T;
+  phone?: T;
+  email?: T;
+  serviceArea?: T;
+  services?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +628,384 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  heroEyebrow: string;
+  heroTitle: string;
+  heroCopy: string;
+  heroImage?: (number | null) | Media;
+  primaryActionLabel: string;
+  primaryActionHref: string;
+  secondaryActionLabel: string;
+  secondaryActionHref: string;
+  categoryHighlightsLimit: number;
+  popularEyebrow: string;
+  popularTitle: string;
+  popularLimit: number;
+  workflowEyebrow: string;
+  workflowTitle: string;
+  workflowCopy: string;
+  processSteps?:
+    | {
+        number: string;
+        title: string;
+        copy: string;
+        id?: string | null;
+      }[]
+    | null;
+  pipelineStatuses?:
+    | {
+        label: string;
+        detail: string;
+        color: 'gold' | 'teal' | 'coral' | 'green';
+        id?: string | null;
+      }[]
+    | null;
+  pricingEyebrow: string;
+  pricingTitle: string;
+  pricingLimit: number;
+  customerTrustEyebrow: string;
+  customerTrustTitle: string;
+  customerTrustLimit: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-pages".
+ */
+export interface SitePage {
+  id: number;
+  servicesEyebrow: string;
+  servicesTitle: string;
+  servicesCopy?: string | null;
+  servicesHeroImage?: (number | null) | Media;
+  aboutEyebrow: string;
+  aboutTitle: string;
+  aboutCopy: string;
+  aboutHeroImage?: (number | null) | Media;
+  aboutBody?:
+    | {
+        copy: string;
+        id?: string | null;
+      }[]
+    | null;
+  aboutProcessSteps?:
+    | {
+        number: string;
+        title: string;
+        copy: string;
+        id?: string | null;
+      }[]
+    | null;
+  contactEyebrow: string;
+  contactTitle: string;
+  contactCopy: string;
+  contactCards?:
+    | {
+        title: string;
+        body: string;
+        actionLabel?: string | null;
+        actionHref?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  bookingEyebrow: string;
+  bookingTitle: string;
+  bookingCopy: string;
+  bookingPanelKicker: string;
+  bookingPanelTitle: string;
+  bookingButtonLabel: string;
+  bookingPanelNote: string;
+  bookingNextTitle: string;
+  bookingProcessSteps?:
+    | {
+        number: string;
+        title: string;
+        copy: string;
+        id?: string | null;
+      }[]
+    | null;
+  partnerEyebrow: string;
+  partnerTitle: string;
+  partnerCopy: string;
+  partnerHeroImage?: (number | null) | Media;
+  partnerPanelKicker: string;
+  partnerPanelTitle: string;
+  partnerMissingFieldsMessage: string;
+  partnerAvailabilityOptions?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  partnerNotesPlaceholder: string;
+  partnerSubmitLabel: string;
+  partnerPanelNote: string;
+  partnerReviewEyebrow: string;
+  partnerReviewTitle: string;
+  partnerReviewCopy: string;
+  partnerReviewStatuses?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  kycEyebrow: string;
+  kycTitle: string;
+  kycCopy: string;
+  kycSubmittedEyebrow: string;
+  kycSubmittedTitle: string;
+  kycSubmittedCopy: string;
+  kycApplicationEyebrow: string;
+  kycApplicationTitle: string;
+  kycApplicationCopy: string;
+  kycContinueLabel: string;
+  kycLaterLabel: string;
+  kycFormKicker: string;
+  kycMissingFieldsMessage: string;
+  kycSubmitLabel: string;
+  kycFormNote: string;
+  kycApplicationNeededEyebrow: string;
+  kycApplicationNeededTitle: string;
+  kycApplicationNeededCopy: string;
+  kycApplicationErrorMessage: string;
+  kycPartnerFormLabel: string;
+  kycAdminEyebrow: string;
+  kycAdminTitle: string;
+  kycAdminCopy: string;
+  kycAdminStatuses?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  brandName: string;
+  brandInitial: string;
+  navLinks?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  primaryActionLabel: string;
+  primaryActionHref: string;
+  secondaryActionLabel: string;
+  secondaryActionHref: string;
+  footerCopy: string;
+  footerLinks?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  heroEyebrow?: T;
+  heroTitle?: T;
+  heroCopy?: T;
+  heroImage?: T;
+  primaryActionLabel?: T;
+  primaryActionHref?: T;
+  secondaryActionLabel?: T;
+  secondaryActionHref?: T;
+  categoryHighlightsLimit?: T;
+  popularEyebrow?: T;
+  popularTitle?: T;
+  popularLimit?: T;
+  workflowEyebrow?: T;
+  workflowTitle?: T;
+  workflowCopy?: T;
+  processSteps?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        copy?: T;
+        id?: T;
+      };
+  pipelineStatuses?:
+    | T
+    | {
+        label?: T;
+        detail?: T;
+        color?: T;
+        id?: T;
+      };
+  pricingEyebrow?: T;
+  pricingTitle?: T;
+  pricingLimit?: T;
+  customerTrustEyebrow?: T;
+  customerTrustTitle?: T;
+  customerTrustLimit?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-pages_select".
+ */
+export interface SitePagesSelect<T extends boolean = true> {
+  servicesEyebrow?: T;
+  servicesTitle?: T;
+  servicesCopy?: T;
+  servicesHeroImage?: T;
+  aboutEyebrow?: T;
+  aboutTitle?: T;
+  aboutCopy?: T;
+  aboutHeroImage?: T;
+  aboutBody?:
+    | T
+    | {
+        copy?: T;
+        id?: T;
+      };
+  aboutProcessSteps?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        copy?: T;
+        id?: T;
+      };
+  contactEyebrow?: T;
+  contactTitle?: T;
+  contactCopy?: T;
+  contactCards?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        actionLabel?: T;
+        actionHref?: T;
+        id?: T;
+      };
+  bookingEyebrow?: T;
+  bookingTitle?: T;
+  bookingCopy?: T;
+  bookingPanelKicker?: T;
+  bookingPanelTitle?: T;
+  bookingButtonLabel?: T;
+  bookingPanelNote?: T;
+  bookingNextTitle?: T;
+  bookingProcessSteps?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        copy?: T;
+        id?: T;
+      };
+  partnerEyebrow?: T;
+  partnerTitle?: T;
+  partnerCopy?: T;
+  partnerHeroImage?: T;
+  partnerPanelKicker?: T;
+  partnerPanelTitle?: T;
+  partnerMissingFieldsMessage?: T;
+  partnerAvailabilityOptions?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  partnerNotesPlaceholder?: T;
+  partnerSubmitLabel?: T;
+  partnerPanelNote?: T;
+  partnerReviewEyebrow?: T;
+  partnerReviewTitle?: T;
+  partnerReviewCopy?: T;
+  partnerReviewStatuses?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  kycEyebrow?: T;
+  kycTitle?: T;
+  kycCopy?: T;
+  kycSubmittedEyebrow?: T;
+  kycSubmittedTitle?: T;
+  kycSubmittedCopy?: T;
+  kycApplicationEyebrow?: T;
+  kycApplicationTitle?: T;
+  kycApplicationCopy?: T;
+  kycContinueLabel?: T;
+  kycLaterLabel?: T;
+  kycFormKicker?: T;
+  kycMissingFieldsMessage?: T;
+  kycSubmitLabel?: T;
+  kycFormNote?: T;
+  kycApplicationNeededEyebrow?: T;
+  kycApplicationNeededTitle?: T;
+  kycApplicationNeededCopy?: T;
+  kycApplicationErrorMessage?: T;
+  kycPartnerFormLabel?: T;
+  kycAdminEyebrow?: T;
+  kycAdminTitle?: T;
+  kycAdminCopy?: T;
+  kycAdminStatuses?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  brandName?: T;
+  brandInitial?: T;
+  navLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  primaryActionLabel?: T;
+  primaryActionHref?: T;
+  secondaryActionLabel?: T;
+  secondaryActionHref?: T;
+  footerCopy?: T;
+  footerLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
