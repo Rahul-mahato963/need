@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
       {
         pathname: '/service-heroes/**',
       },
+      {
+        pathname: '/contact-hero-bg.png',
+      },
     ],
   },
   webpack: (webpackConfig) => {

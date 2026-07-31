@@ -783,10 +783,15 @@ export const fallbackSitePages: NeedSitePagesContent = {
       'The team reviews each request, confirms the provider, and keeps the booking status moving until the visit is complete.',
     eyebrow: 'Booking flow',
     nextTitle: 'What happens next',
-    note: 'No payment is collected until your request is reviewed.',
+    note: 'The Rs. 199 visiting service charge covers the site visit only. Final quotation is shared after technician inspection.',
     panelKicker: 'Instant estimate',
     panelTitle: 'Book a verified expert',
-    processSteps: fallbackHomePageContent.processSteps,
+    processSteps: [
+      { copy: 'Pay or confirm the Rs. 199 visiting service charge and share your address.', number: '1', title: 'Book visit' },
+      { copy: 'Technician reaches the location, checks the issue, and clears doubts.', number: '2', title: 'Site inspection' },
+      { copy: 'Technician submits a quotation to admin for review.', number: '3', title: 'Quotation' },
+      { copy: 'Admin shares the final quotation with the client for approval.', number: '4', title: 'Client approval' },
+    ],
     title: 'Select a service, choose a slot, and send the request to NEED operations.',
   },
   contact: {
@@ -1014,7 +1019,7 @@ const toNeedTestimonial = (testimonial: TestimonialDoc): NeedTestimonial => ({
 
 const isNeedService = (service: NeedService | null): service is NeedService => Boolean(service)
 
-const toProcessSteps = (steps: HomePageDoc['processSteps']) => {
+const toProcessSteps = (steps: HomePageDoc['processSteps'], fallbackSteps = fallbackHomePageContent.processSteps) => {
   const mappedSteps = steps
     ?.map((step) => ({
       copy: step.copy?.trim() ?? '',
@@ -1023,7 +1028,7 @@ const toProcessSteps = (steps: HomePageDoc['processSteps']) => {
     }))
     .filter((step) => step.copy && step.number && step.title)
 
-  return mappedSteps && mappedSteps.length > 0 ? mappedSteps : fallbackHomePageContent.processSteps
+  return mappedSteps && mappedSteps.length > 0 ? mappedSteps : fallbackSteps
 }
 
 const toPipelineStatuses = (statuses: HomePageDoc['pipelineStatuses']) => {
@@ -1099,7 +1104,7 @@ const toSitePages = (pages?: SitePagesDoc | null): NeedSitePagesContent => ({
     copy: toText(pages?.aboutCopy, fallbackSitePages.about.copy),
     eyebrow: toText(pages?.aboutEyebrow, fallbackSitePages.about.eyebrow),
     heroImage: toMediaURL(pages?.aboutHeroImage, { preferOriginal: true }),
-    processSteps: toProcessSteps(pages?.aboutProcessSteps),
+    processSteps: toProcessSteps(pages?.aboutProcessSteps, fallbackSitePages.about.processSteps),
     title: toText(pages?.aboutTitle, fallbackSitePages.about.title),
   },
   booking: {
@@ -1110,7 +1115,7 @@ const toSitePages = (pages?: SitePagesDoc | null): NeedSitePagesContent => ({
     note: toText(pages?.bookingPanelNote, fallbackSitePages.booking.note),
     panelKicker: toText(pages?.bookingPanelKicker, fallbackSitePages.booking.panelKicker),
     panelTitle: toText(pages?.bookingPanelTitle, fallbackSitePages.booking.panelTitle),
-    processSteps: toProcessSteps(pages?.bookingProcessSteps),
+    processSteps: toProcessSteps(pages?.bookingProcessSteps, fallbackSitePages.booking.processSteps),
     title: toText(pages?.bookingTitle, fallbackSitePages.booking.title),
   },
   contact: {

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { emptyStateClass, PageShell, ServiceHero, ServiceIconBadge } from '../../components'
-import { formatPrice, getCategory, getServicesByCategory } from '@/lib/need-data'
+import { getCategory, getServicesByCategory } from '@/lib/need-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,7 +31,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         {categoryServices.length > 0 ? (
           categoryServices.map((service) => (
             <Link
-              className="grid grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-x-8 gap-y-4 rounded-lg border border-[rgba(23,34,31,0.1)] bg-white px-7 py-5 shadow-[0_16px_42px_rgba(23,34,31,0.05)] transition hover:border-[rgba(9,107,104,0.28)] hover:shadow-[0_20px_46px_rgba(23,34,31,0.09)] max-[760px]:grid-cols-[52px_minmax(0,1fr)] max-[760px]:px-4 max-[760px]:py-4"
+              className="grid grid-cols-[64px_minmax(0,1fr)] items-center gap-x-8 gap-y-4 rounded-lg border border-[rgba(23,34,31,0.1)] bg-white px-7 py-5 shadow-[0_16px_42px_rgba(23,34,31,0.05)] transition hover:border-[rgba(9,107,104,0.28)] hover:shadow-[0_20px_46px_rgba(23,34,31,0.09)] max-[760px]:grid-cols-[52px_minmax(0,1fr)] max-[760px]:px-4 max-[760px]:py-4"
               href={`/services/${category.slug}/${service.slug}`}
               key={service.slug}
             >
@@ -44,9 +44,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <h3 className="text-[1.28rem] font-black leading-tight text-[#17221f]">{service.name}</h3>
                 <p className="mt-1 text-[1rem] leading-snug text-[#60706b]">{service.description}</p>
               </div>
-              <span className="inline-flex min-h-11 items-center justify-center rounded-md bg-[#096b68] px-5 py-3 font-black text-white max-[760px]:col-start-2 max-[760px]:justify-self-start">
-                From {formatPrice(service.basePrice)}
-              </span>
             </Link>
           ))
         ) : (

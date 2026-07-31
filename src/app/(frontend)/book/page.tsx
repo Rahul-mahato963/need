@@ -39,8 +39,11 @@ export default async function BookPage() {
                 </li>
               ))}
             </ol>
-            <Link className={cn(secondaryActionClass, 'w-full')} href="/account/bookings">
+            <Link className={cn(secondaryActionClass, 'w-full !border-[#096b68] !bg-[#096b68] !text-white')} href="/account/bookings">
               View my bookings
+            </Link>
+            <Link className={cn(secondaryActionClass, 'w-full !border-[#f2bd2b] !bg-[#f2bd2b] !text-[#17221f]')} href="/technician/quotation">
+              Technicians only: send quotation
             </Link>
           </aside>
         </div>

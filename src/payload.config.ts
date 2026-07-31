@@ -13,6 +13,7 @@ import { Customers } from './collections/Customers'
 import { PartnerApplications } from './collections/PartnerApplications'
 import { PartnerKYCSubmissions } from './collections/PartnerKYCSubmissions'
 import { Providers } from './collections/Providers'
+import { Quotations } from './collections/Quotations'
 import { Services } from './collections/Services'
 import { Testimonials } from './collections/Testimonials'
 import { HomePage } from './globals/HomePage'
@@ -40,6 +41,7 @@ export default buildConfig({
     PartnerApplications,
     PartnerKYCSubmissions,
     Providers,
+    Quotations,
   ],
   globals: [HomePage, SitePages, SiteSettings],
   editor: lexicalEditor(),

@@ -15,6 +15,7 @@ import {
   type NeedService,
   type NeedSiteSettings,
 } from '@/lib/need-data'
+import { visitingServiceCharge } from '@/lib/pricing'
 import serviceHeroBg from '@/service-hero-bg.png'
 
 export { CategorySlider }
@@ -88,7 +89,7 @@ export const partnerAdminStepClass =
 
 const brandClass = 'inline-flex items-center gap-2.5 font-black tracking-[0]'
 const brandMarkClass =
-  'inline-flex h-[34px] w-[34px] items-center justify-center rounded-md border border-white/10 bg-[#17221f] text-[#f2bd2b]'
+  'inline-flex h-[34px] w-[34px] items-center justify-center rounded-md border border-[#17221f]/15 bg-[#f2bd2b] text-[#8a5a00]'
 const navLinkClass =
   'text-[0.95rem] font-bold text-white/82 transition hover:text-white max-[760px]:inline-flex max-[760px]:min-h-[38px] max-[760px]:min-w-0 max-[760px]:items-center max-[760px]:justify-center max-[760px]:overflow-hidden max-[760px]:!whitespace-normal max-[760px]:rounded-md max-[760px]:border max-[760px]:border-white/10 max-[760px]:bg-white/10 max-[760px]:px-1 max-[760px]:py-1.5 max-[760px]:text-center max-[760px]:text-[clamp(0.64rem,2.9vw,0.76rem)] max-[760px]:leading-[1.05] max-[760px]:text-white'
 const headerButtonClass =
@@ -402,8 +403,8 @@ export function PopularServiceGrid({
 
         return (
           <Link
-            aria-label={`${service.name}, ${service.categoryName}, from ${formatPrice(service.basePrice)}`}
-            className="relative grid min-h-[238px] min-w-0 grid-rows-[auto_1fr_auto] gap-[13px] overflow-hidden rounded-lg border border-[rgba(23,34,31,0.1)] bg-white p-[18px] transition hover:-translate-y-0.5 hover:border-[rgba(9,107,104,0.36)] hover:shadow-[0_18px_42px_rgba(23,34,31,0.1)] focus-visible:-translate-y-0.5 focus-visible:border-[rgba(9,107,104,0.36)] focus-visible:shadow-[0_18px_42px_rgba(23,34,31,0.1)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[rgba(242,189,43,0.72)] after:absolute after:-right-[38px] after:-top-[42px] after:z-0 after:h-[92px] after:w-[126px] after:rotate-[10deg] after:bg-[linear-gradient(135deg,rgba(242,189,43,0.22),rgba(9,107,104,0))]"
+            aria-label={`${service.name}, ${service.categoryName}`}
+            className="relative grid min-h-[238px] min-w-0 grid-rows-[auto_1fr] gap-[13px] overflow-hidden rounded-lg border border-[rgba(23,34,31,0.1)] bg-white p-[18px] transition hover:-translate-y-0.5 hover:border-[rgba(9,107,104,0.36)] hover:shadow-[0_18px_42px_rgba(23,34,31,0.1)] focus-visible:-translate-y-0.5 focus-visible:border-[rgba(9,107,104,0.36)] focus-visible:shadow-[0_18px_42px_rgba(23,34,31,0.1)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[rgba(242,189,43,0.72)] after:absolute after:-right-[38px] after:-top-[42px] after:z-0 after:h-[92px] after:w-[126px] after:rotate-[10deg] after:bg-[linear-gradient(135deg,rgba(242,189,43,0.22),rgba(9,107,104,0))]"
             href={`/services/${service.category}/${service.slug}`}
             key={service.slug}
           >
@@ -414,9 +415,6 @@ export function PopularServiceGrid({
                 {toShortDescription(service.description)}
               </p>
             </div>
-            <span className="relative z-[1] mt-0.5 text-[0.86rem] font-black text-[#5f8f45]">
-              From {formatPrice(service.basePrice)}
-            </span>
           </Link>
         )
       })}
@@ -459,7 +457,7 @@ export function BookingPanel({
           {hasServices ? (
             serviceOptions.map((service) => (
               <option key={service.slug} value={service.id}>
-                {service.name} - {formatPrice(service.basePrice)}
+                {service.name}
               </option>
             ))
           ) : (
@@ -467,6 +465,10 @@ export function BookingPanel({
           )}
         </select>
       </label>
+      <div className="flex min-h-12 items-center justify-between gap-3 rounded-md border border-[rgba(9,107,104,0.14)] bg-[#eef4f0] px-3 py-2.5">
+        <span className="text-[0.86rem] font-extrabold text-[#17221f]">Visiting service charge</span>
+        <strong className="text-[1rem] text-[#096b68]">{formatPrice(visitingServiceCharge)}</strong>
+      </div>
       <div className={formTwoColumnClass}>
         <label className={labelClass}>
           Date

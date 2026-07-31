@@ -78,6 +78,7 @@ export interface Config {
     'partner-applications': PartnerApplication;
     'partner-kyc-submissions': PartnerKycSubmission;
     providers: Provider;
+    quotations: Quotation;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -95,6 +96,7 @@ export interface Config {
     'partner-applications': PartnerApplicationsSelect<false> | PartnerApplicationsSelect<true>;
     'partner-kyc-submissions': PartnerKycSubmissionsSelect<false> | PartnerKycSubmissionsSelect<true>;
     providers: ProvidersSelect<false> | ProvidersSelect<true>;
+    quotations: QuotationsSelect<false> | QuotationsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -406,6 +408,40 @@ export interface Provider {
   createdAt: string;
 }
 /**
+ * Technician-only quotations submitted after site inspection.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotations".
+ */
+export interface Quotation {
+  id: number;
+  booking: number | Booking;
+  customer: number | Customer;
+  /**
+   * Admin can link this quotation to the approved provider record.
+   */
+  provider?: (number | null) | Provider;
+  technicianName: string;
+  technicianPhone: string;
+  inspectionNotes: string;
+  lineItems: {
+    description: string;
+    amount: number;
+    id?: string | null;
+  }[];
+  laborCharge: number;
+  partsCharge: number;
+  totalAmount: number;
+  status: 'submitted' | 'reviewed' | 'sent-to-client' | 'accepted' | 'rejected';
+  /**
+   * Optional site or issue photos uploaded by admin.
+   */
+  sitePhotos?: (number | Media)[] | null;
+  adminNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -468,6 +504,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'providers';
         value: number | Provider;
+      } | null)
+    | ({
+        relationTo: 'quotations';
+        value: number | Quotation;
       } | null);
   globalSlug?: string | null;
   user:
@@ -726,6 +766,33 @@ export interface ProvidersSelect<T extends boolean = true> {
   serviceArea?: T;
   services?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotations_select".
+ */
+export interface QuotationsSelect<T extends boolean = true> {
+  booking?: T;
+  customer?: T;
+  provider?: T;
+  technicianName?: T;
+  technicianPhone?: T;
+  inspectionNotes?: T;
+  lineItems?:
+    | T
+    | {
+        description?: T;
+        amount?: T;
+        id?: T;
+      };
+  laborCharge?: T;
+  partsCharge?: T;
+  totalAmount?: T;
+  status?: T;
+  sitePhotos?: T;
+  adminNotes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

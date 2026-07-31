@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { visitingServiceCharge } from '@/lib/pricing'
+
 const bookingStatuses = [
   { label: 'Pending', value: 'pending' },
   { label: 'Confirmed', value: 'confirmed' },
@@ -137,7 +139,7 @@ export const Bookings: CollectionConfig = {
           })
 
           data.serviceName = service.name
-          data.estimatedPrice = service.basePrice
+          data.estimatedPrice = visitingServiceCharge
         }
 
         return data

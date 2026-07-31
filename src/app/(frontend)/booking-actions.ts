@@ -6,6 +6,8 @@ import { headers as nextHeaders } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createLocalReq, getPayload } from 'payload'
 
+import { visitingServiceCharge } from '@/lib/pricing'
+
 const cleanString = (value: FormDataEntryValue | null) => (typeof value === 'string' ? value.trim() : '')
 
 const timeSlots = ['09:00', '10:00', '14:00', '17:00'] as const
@@ -75,7 +77,7 @@ export async function submitBooking(formData: FormData) {
     data: {
       address,
       customer: auth.user.id,
-      estimatedPrice: service.basePrice,
+      estimatedPrice: visitingServiceCharge,
       locationLatitude,
       locationLongitude,
       locationMapLink,

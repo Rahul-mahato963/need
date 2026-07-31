@@ -11,7 +11,7 @@ import {
   ServiceHero,
   ServiceIconBadge,
 } from '../../../components'
-import { formatPrice, getService, getServices, getSitePages } from '@/lib/need-data'
+import { getService, getServices, getSitePages } from '@/lib/need-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,11 +48,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
             imageSrc={service.logo}
             label={`${service.name} ${service.categoryName} ${service.icon}`}
           />
-          <h2 className="mt-4 text-[clamp(2rem,4vw,3.4rem)] font-black leading-[1.02] tracking-[0]">
-            From {formatPrice(service.basePrice)}
-          </h2>
           <p className="mt-4 leading-[1.55] text-[#60706b]">
-            {service.durationMinutes} minute standard visit. Final price depends on parts, scope, and site condition.
+            {service.durationMinutes} minute standard visit. Parts, scope, and site condition are confirmed during the visit.
           </p>
           <ul className="mt-6 grid gap-2.5 pl-5">
             {service.includes.map((item) => (
