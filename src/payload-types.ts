@@ -64,6 +64,7 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    customers: CustomerAuthOperations;
   };
   blocks: {};
   collections: {
@@ -72,6 +73,8 @@ export interface Config {
     categories: Category;
     services: Service;
     testimonials: Testimonial;
+    customers: Customer;
+    bookings: Booking;
     'partner-applications': PartnerApplication;
     'partner-kyc-submissions': PartnerKycSubmission;
     providers: Provider;
@@ -87,6 +90,8 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
+    bookings: BookingsSelect<false> | BookingsSelect<true>;
     'partner-applications': PartnerApplicationsSelect<false> | PartnerApplicationsSelect<true>;
     'partner-kyc-submissions': PartnerKycSubmissionsSelect<false> | PartnerKycSubmissionsSelect<true>;
     providers: ProvidersSelect<false> | ProvidersSelect<true>;
@@ -113,13 +118,31 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: User | Customer;
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface CustomerAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -269,6 +292,62 @@ export interface Testimonial {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'customers';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: number;
+  customer: number | Customer;
+  service: number | Service;
+  serviceName: string;
+  estimatedPrice: number;
+  scheduledDate: string;
+  timeSlot: '09:00' | '10:00' | '14:00' | '17:00';
+  phone: string;
+  address: string;
+  /**
+   * Optional GPS latitude shared from the booking form.
+   */
+  locationLatitude?: number | null;
+  /**
+   * Optional GPS longitude shared from the booking form.
+   */
+  locationLongitude?: number | null;
+  /**
+   * Open this link to view the customer location on Google Maps.
+   */
+  locationMapLink?: string | null;
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  adminNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "partner-applications".
  */
 export interface PartnerApplication {
@@ -371,6 +450,14 @@ export interface PayloadLockedDocument {
         value: number | Testimonial;
       } | null)
     | ({
+        relationTo: 'customers';
+        value: number | Customer;
+      } | null)
+    | ({
+        relationTo: 'bookings';
+        value: number | Booking;
+      } | null)
+    | ({
         relationTo: 'partner-applications';
         value: number | PartnerApplication;
       } | null)
@@ -383,10 +470,15 @@ export interface PayloadLockedDocument {
         value: number | Provider;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: number | Customer;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -396,10 +488,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: number | Customer;
+      };
   key?: string | null;
   value?:
     | {
@@ -530,6 +627,49 @@ export interface TestimonialsSelect<T extends boolean = true> {
   service?: T;
   photo?: T;
   featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings_select".
+ */
+export interface BookingsSelect<T extends boolean = true> {
+  customer?: T;
+  service?: T;
+  serviceName?: T;
+  estimatedPrice?: T;
+  scheduledDate?: T;
+  timeSlot?: T;
+  phone?: T;
+  address?: T;
+  locationLatitude?: T;
+  locationLongitude?: T;
+  locationMapLink?: T;
+  status?: T;
+  adminNotes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

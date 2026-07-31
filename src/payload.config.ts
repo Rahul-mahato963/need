@@ -8,6 +8,8 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Categories } from './collections/Categories'
+import { Bookings } from './collections/Bookings'
+import { Customers } from './collections/Customers'
 import { PartnerApplications } from './collections/PartnerApplications'
 import { PartnerKYCSubmissions } from './collections/PartnerKYCSubmissions'
 import { Providers } from './collections/Providers'
@@ -33,6 +35,8 @@ export default buildConfig({
     Categories,
     Services,
     Testimonials,
+    Customers,
+    Bookings,
     PartnerApplications,
     PartnerKYCSubmissions,
     Providers,

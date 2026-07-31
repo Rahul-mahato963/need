@@ -15,7 +15,7 @@ import {
   sectionHeadingClass,
   ServiceIconBadge,
 } from './components'
-import { formatPrice, getHomeData } from '@/lib/need-data'
+import { getHomeData } from '@/lib/need-data'
 import needHeroPoster from '@/img.jpg'
 
 export const dynamic = 'force-dynamic'
@@ -29,7 +29,6 @@ const statusColorClasses = {
 
 export default async function HomePage() {
   const { categories, homePage, services, testimonials } = await getHomeData()
-  const featuredServices = services.slice(0, homePage.pricing.limit)
   const customerTrustCards = testimonials.slice(0, homePage.customerTrust.limit)
 
   return (
@@ -117,40 +116,6 @@ export default async function HomePage() {
             </div>
           ))}
         </aside>
-      </section>
-
-      <section className={sectionClass}>
-        <div className={sectionHeadingClass}>
-          <span className={eyebrowClass}>{homePage.pricing.eyebrow}</span>
-          <h2 className="text-[clamp(2rem,4vw,3.4rem)] font-black leading-[1.02] tracking-[0]">
-            {homePage.pricing.title}
-          </h2>
-        </div>
-        {featuredServices.length > 0 ? (
-          <div className="grid grid-cols-4 gap-4 max-[1100px]:grid-cols-2 max-[760px]:grid-cols-1">
-            {featuredServices.map((service) => (
-              <Link
-                className="grid gap-3.5 rounded-lg border border-[rgba(23,34,31,0.1)] bg-white p-[18px]"
-                href={`/services/${service.category}/${service.slug}`}
-                key={service.slug}
-              >
-                <ServiceIconBadge
-                  className="h-[54px] w-[54px] shadow-[0_10px_22px_rgba(23,34,31,0.13)]"
-                  imageSrc={service.logo}
-                  label={`${service.name} ${service.categoryName} ${service.icon}`}
-                />
-                <div>
-                  <small className="text-[0.86rem] text-[#60706b]">{service.categoryName}</small>
-                  <strong className="block text-[1.08rem] font-black leading-tight">{service.name}</strong>
-                  <p className="leading-[1.55] text-[#60706b]">{service.description}</p>
-                </div>
-                <b className="mt-auto block text-[1.08rem] text-[#096b68]">{formatPrice(service.basePrice)}</b>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className={emptyStateClass}>Add services in the Payload admin to show starting prices.</p>
-        )}
       </section>
 
       <section className={cn(sectionClass, 'bg-[#f4eadb]')}>

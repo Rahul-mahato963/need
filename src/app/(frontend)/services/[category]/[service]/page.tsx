@@ -68,7 +68,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
             </Link>
           </div>
         </article>
-        <BookingPanel compact content={pages.booking} services={services} />
+        <BookingPanel
+          compact
+          content={pages.booking}
+          returnTo={`/services/${service.category}/${service.slug}`}
+          selectedServiceId={service.id}
+          services={services}
+        />
       </section>
     </PageShell>
   )

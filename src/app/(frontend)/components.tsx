@@ -3,6 +3,8 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 import { CategorySlider } from './CategorySlider'
+import { BookingLocationPicker } from './BookingLocationPicker'
+import { submitBooking } from './booking-actions'
 import { InstallAppButton } from './InstallAppButton'
 import {
   formatPrice,
@@ -86,26 +88,38 @@ export const partnerAdminStepClass =
 
 const brandClass = 'inline-flex items-center gap-2.5 font-black tracking-[0]'
 const brandMarkClass =
-  'inline-flex h-[34px] w-[34px] items-center justify-center rounded-md bg-[#17221f] text-[#f2bd2b]'
+  'inline-flex h-[34px] w-[34px] items-center justify-center rounded-md border border-white/10 bg-[#17221f] text-[#f2bd2b]'
 const navLinkClass =
-  'text-[0.95rem] font-bold text-[#60706b] max-[760px]:inline-flex max-[760px]:min-w-0 max-[760px]:justify-center max-[760px]:whitespace-nowrap max-[760px]:rounded-md max-[760px]:border max-[760px]:border-[rgba(9,107,104,0.14)] max-[760px]:bg-[rgba(9,107,104,0.08)] max-[760px]:px-1 max-[760px]:py-2 max-[760px]:text-center max-[760px]:text-[0.8rem]'
+  'text-[0.95rem] font-bold text-white/82 transition hover:text-white max-[760px]:inline-flex max-[760px]:min-h-[38px] max-[760px]:min-w-0 max-[760px]:items-center max-[760px]:justify-center max-[760px]:overflow-hidden max-[760px]:!whitespace-normal max-[760px]:rounded-md max-[760px]:border max-[760px]:border-white/10 max-[760px]:bg-white/10 max-[760px]:px-1 max-[760px]:py-1.5 max-[760px]:text-center max-[760px]:text-[clamp(0.64rem,2.9vw,0.76rem)] max-[760px]:leading-[1.05] max-[760px]:text-white'
 const headerButtonClass =
   'inline-flex min-h-[46px] items-center justify-center whitespace-nowrap rounded-md bg-[#096b68] px-[18px] py-3 font-[850] text-white max-[760px]:min-h-[38px] max-[760px]:w-full max-[760px]:px-2.5 max-[760px]:py-[9px] max-[760px]:text-[0.82rem]'
 
 export function SiteHeader({ settings }: { settings: NeedSiteSettings }) {
   return (
-    <header className="sticky top-0 z-20 grid grid-cols-[1fr_auto_1fr] items-center gap-5 border-b border-[rgba(23,34,31,0.08)] bg-[#fbf7ef]/[0.92] px-[clamp(18px,4vw,56px)] py-[18px] max-[760px]:grid-cols-2 max-[760px]:items-stretch max-[760px]:gap-2.5 max-[760px]:px-4 max-[760px]:py-3.5">
-      <Link className={cn(brandClass, 'max-[760px]:col-span-2 max-[760px]:justify-self-start')} href="/" aria-label={`${settings.brandName} home`}>
-        <span className={brandMarkClass}>{settings.brandInitial}</span>
-        <span>{settings.brandName}</span>
-      </Link>
-      <nav className="flex items-center justify-center gap-[clamp(14px,3vw,30px)] max-[760px]:contents" aria-label="Primary navigation">
+    <header className="site-header sticky top-0 z-20 grid grid-cols-[1fr_auto_1fr] items-center gap-5 border-b border-white/10 bg-[#171717]/95 px-[clamp(18px,4vw,56px)] py-[18px] text-white shadow-[0_8px_28px_rgba(0,0,0,0.18)] backdrop-blur-md max-[760px]:static max-[760px]:w-full max-[760px]:items-stretch max-[760px]:gap-2.5 max-[760px]:overflow-hidden max-[760px]:px-4 max-[760px]:py-3.5">
+      <div className="site-header-brand-row contents max-[760px]:flex max-[760px]:items-center max-[760px]:gap-2.5">
+        <Link className={cn(brandClass, 'max-[760px]:justify-self-start')} href="/" aria-label={`${settings.brandName} home`}>
+          <span className={brandMarkClass}>{settings.brandInitial}</span>
+          <span>{settings.brandName}</span>
+        </Link>
+        <InstallAppButton className="max-[760px]:w-auto max-[760px]:justify-self-start max-[760px]:px-3" />
+      </div>
+      <nav className="site-nav flex items-center justify-center gap-[clamp(14px,3vw,30px)] max-[760px]:grid max-[760px]:w-full max-[760px]:min-w-0 max-[760px]:grid-cols-[repeat(3,minmax(0,1fr))] max-[760px]:gap-2 max-[760px]:pb-1" aria-label="Primary navigation">
         {settings.navLinks.map((link) => (
           <Link className={navLinkClass} href={link.href} key={`${link.href}-${link.label}`}>{link.label}</Link>
         ))}
+        <Link className={cn(navLinkClass, 'min-[761px]:hidden max-[760px]:!border-[#096b68] max-[760px]:!bg-[#096b68] max-[760px]:!text-white')} href={settings.primaryActionHref}>
+          Book now
+        </Link>
+        <Link className={cn(navLinkClass, 'min-[761px]:hidden max-[760px]:!border-[#f2bd2b] max-[760px]:!bg-[#f2bd2b] max-[760px]:!text-[#17221f]')} href={settings.secondaryActionHref}>
+          <span>
+            Service
+            <br />
+            Partner
+          </span>
+        </Link>
       </nav>
-      <div className="flex items-center gap-2.5 justify-self-end max-[760px]:contents">
-        <InstallAppButton />
+      <div className="flex items-center gap-2.5 justify-self-end max-[760px]:hidden">
         <Link className={headerButtonClass} href={settings.primaryActionHref}>
           {settings.primaryActionLabel}
         </Link>
@@ -382,7 +396,7 @@ export function PopularServiceGrid({
   }
 
   return (
-    <div className="grid grid-cols-[repeat(5,minmax(150px,1fr))] gap-4 overflow-x-auto pb-1">
+    <div className="grid grid-cols-[repeat(5,minmax(150px,1fr))] gap-4 pb-1 max-[1100px]:grid-cols-2 max-[760px]:grid-cols-1">
       {popularServices.map((service) => {
         const iconLabel = `${service.name} ${service.categoryName} ${service.icon}`
 
@@ -418,27 +432,33 @@ export function BookingPanel({
     panelKicker: 'Instant estimate',
     panelTitle: 'Book a verified expert',
   },
+  returnTo = '/book',
+  selectedServiceId,
   services = [],
 }: {
   compact?: boolean
   content?: NeedBookingPanelContent
+  returnTo?: string
+  selectedServiceId?: number
   services?: NeedService[]
 }) {
   const serviceOptions = services
   const hasServices = serviceOptions.length > 0
+  const defaultServiceId = selectedServiceId ?? serviceOptions[0]?.id ?? ''
 
   return (
-    <form className={cn(formPanelClass, compact && 'max-w-[430px] max-[1100px]:max-w-none')}>
+    <form action={submitBooking} className={cn(formPanelClass, compact && 'max-w-[430px] max-[1100px]:max-w-none')}>
+      <input name="returnTo" type="hidden" value={returnTo} />
       <div className={panelHeadingClass}>
         <span className={panelKickerClass}>{content.panelKicker}</span>
         <strong className={panelTitleClass}>{content.panelTitle}</strong>
       </div>
       <label className={labelClass}>
         Service
-        <select className={inputClass} disabled={!hasServices} name="service" defaultValue={serviceOptions[0]?.slug ?? ''}>
+        <select className={inputClass} disabled={!hasServices} name="service" defaultValue={defaultServiceId} required>
           {hasServices ? (
             serviceOptions.map((service) => (
-              <option key={service.slug} value={service.slug}>
+              <option key={service.slug} value={service.id}>
                 {service.name} - {formatPrice(service.basePrice)}
               </option>
             ))
@@ -447,28 +467,31 @@ export function BookingPanel({
           )}
         </select>
       </label>
-      <label className={labelClass}>
-        Date
-        <input className={inputClass} name="date" type="date" />
-      </label>
-      <label className={labelClass}>
-        Time slot
-        <select className={inputClass} name="time" defaultValue="10:00">
-          <option value="09:00">09:00 - 11:00</option>
-          <option value="10:00">10:00 - 12:00</option>
-          <option value="14:00">14:00 - 16:00</option>
-          <option value="17:00">17:00 - 19:00</option>
-        </select>
-      </label>
+      <div className={formTwoColumnClass}>
+        <label className={labelClass}>
+          Date
+          <input className={inputClass} name="date" required type="date" />
+        </label>
+        <label className={labelClass}>
+          Time slot
+          <select className={inputClass} name="time" defaultValue="10:00" required>
+            <option value="09:00">09:00 - 11:00</option>
+            <option value="10:00">10:00 - 12:00</option>
+            <option value="14:00">14:00 - 16:00</option>
+            <option value="17:00">17:00 - 19:00</option>
+          </select>
+        </label>
+      </div>
       <label className={labelClass}>
         Phone
-        <input className={inputClass} name="phone" placeholder="+91 98765 43210" type="tel" />
+        <input className={inputClass} name="phone" placeholder="+91 98765 43210" required type="tel" />
       </label>
       <label className={labelClass}>
         Address
-        <textarea className={textareaClass} name="address" placeholder="Flat, street, area, city" rows={compact ? 3 : 4} />
+        <textarea className={textareaClass} name="address" placeholder="Flat, street, area, city" required rows={compact ? 3 : 4} />
       </label>
-      <button className={primaryActionClass} type="button">
+      <BookingLocationPicker />
+      <button className={cn(primaryActionClass, 'w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-60')} disabled={!hasServices} type="submit">
         {content.buttonLabel}
       </button>
       <p className={panelNoteClass}>{content.note}</p>

@@ -9,3 +9,24 @@
     transform: translateX(0);
   }
 }
+
+@media (max-width: 760px) {
+  .site-header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .site-header-brand-row {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .site-nav {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    width: 100%;
+    min-width: 0;
+  }
+}
